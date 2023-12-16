@@ -7,6 +7,6 @@
     {
         public const string GUID = "com.kylethescientist.gorillatag.computerplusplus";
         public const string Name = "Computer++";
-        public const string Version = "0.3.0"; 
+        public const string Version = "1.0.0"; 
     }
 }

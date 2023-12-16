@@ -25,20 +25,32 @@ namespace WalkSimulator.Tools
 
         public static Texture2D LoadImageFromFile()
         {
+            string path = Paths.PluginPath + "/ComputerPlusPlus";
+            //create directory if it doesn't exist
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
             try
             {
-                string path = Paths.PluginPath + "/ComputerPlusPlus/wallpaper.png";
-                byte[] bytes = File.ReadAllBytes(path);
+                byte[] bytes = File.ReadAllBytes(path + "/wallpaper.png");
                 Texture2D loadTexture = new Texture2D(1, 1); //mock size 1x1
                 loadTexture.LoadImage(bytes);
                 return loadTexture;
             }
             catch (Exception e)
             {
-                Logging.Info("Did not find wallpaper.png in Computer++ folder.");
+                //create a blank white image
+                Logging.Info("Did not find wallpaper.png in ComputerPlusPlus folder.");
                 Logging.Exception(e);
+                Texture2D texture = new Texture2D(192, 108);
+                Color[] colors = new Color[texture.width * texture.height];
+                for (int i = 0; i < colors.Length; i++)
+                    colors[i] = Color.white;
+                texture.SetPixels(colors);
+                texture.Apply();
+                byte[] placeholder = texture.EncodeToPNG();
+                File.WriteAllBytes(path + "/wallpaper.png", placeholder);
+                return texture;
             }
-            return null;
         }
 
         /// <summary>

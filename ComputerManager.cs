@@ -199,13 +199,18 @@ namespace ComputerPlusPlus
                 originalScreenText.enabled = false;
             if (originalFunctionText)
                 originalFunctionText.enabled = false;
-
-            ScreenText = string.Format(
-                Template,
-                Center(currentScreen.Title.ToUpper()),
-                currentScreen.Description.ToUpper(),
-                currentScreen.GetContent().ToUpper()
-            );
+            var text = "";
+            if (currentScreen.Title.Length > 0) {
+                text += Center(currentScreen.Title.ToUpper()) + "\n";
+                text += Divider;
+            }
+            if (currentScreen.Description.Length > 0)
+            {
+                text += currentScreen.Description.ToUpper() + "\n";
+                text += Divider;
+            }
+            text += currentScreen.GetContent().ToUpper();
+            ScreenText = text;
         }
 
 

@@ -79,6 +79,7 @@ namespace ComputerPlusPlus
                 }
             }
             catch (Exception e) { Logging.Exception(e); }
+            ComputerManager.Instance.RegisterScreen(new VersionScreen());
             ComputerManager.Instance.Initialize();
         }
 

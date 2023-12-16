@@ -20,13 +20,14 @@ To add a custom wallpaper, simply drop an image file called `wallpaper.png` into
 
 ## Custom Screens
 
-If you want to add your own screen to ComputerPlusPlus you can do so by a BepInEx plugin with a class that implements the ComputerPlusPlus.IScreen interface. All classes that implement this interface will be automatically loaded and added to the list of screens. 
+If you want to add your own screen to Computer++ you can do so by creating a BepInEx plugin with a class that implements the `ComputerPlusPlus.IScreen` interface. All classes that implement this interface will be automatically loaded and added to the list of screens. 
 
 An example of a plugin that implements a custom screen can be seen below:
 
 ```csharp
-using ComputerPlusPlus;
+using BepInEx;
 using UnityEngine;
+using ComputerPlusPlus;
 
 [BepInPlugin("com.yourname.gorillatag.yourpluginname", "YourPluginName", "1.0.0")]
 [BepInDependency("com.kylethescientist.gorillatag.computerplusplus")]
@@ -63,7 +64,7 @@ public class TestScreen : IScreen
 
 
 ## Important notes
-While *Computer++* is designed to be safe to use in modded lobbies, it is important to note that using mods in any form in public lobbies can result in a ban from the game. Use *Computer++* at your own risk.
+While *Computer++* is designed to be safe to use in all lobbies, it is important to note that using mods in any form in public lobbies can result in a ban from the game. Use *Computer++* at your own risk.
 
 ## Bugs and issues
 If you encounter any bugs or issues while using *Computer++*, please report them on the mod's GitHub page or in the discord server linked above. I will do my best to address them as soon as possible. 

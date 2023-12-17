@@ -3,6 +3,7 @@ using BepInEx.Configuration;
 using ComputerPlusPlus.Screens;
 using ComputerPlusPlus.Tools;
 using System;
+using System.Reflection;
 
 namespace ComputerPlusPlus
 {
@@ -23,7 +24,7 @@ namespace ComputerPlusPlus
         void OnEnable()
         {
             HarmonyPatches.ApplyHarmonyPatches();
-            if(ComputerManager.Instance != null)
+            if (ComputerManager.Instance != null)
                 ComputerManager.Instance.enabled = true;
         }
 
@@ -49,40 +50,70 @@ namespace ComputerPlusPlus
             ComputerManager.Instance.RegisterScreen(new GroupScreen());
             ComputerManager.Instance.RegisterScreen(new ItemsScreen());
 
-            try
+            foreach (var assembly in GetAssemblies())
             {
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                //exclude the executing assembly
+                if (assembly == typeof(Plugin).Assembly)
+                    continue;
+                foreach (var type in GetTypes(assembly))
                 {
-                    //exclude the executing assembly
-                    if (assembly == typeof(Plugin).Assembly)
-                        continue;
-                    foreach (var type in assembly.GetTypes())
+                    foreach (var iface in GetInterfaces(type))
                     {
-                        foreach (var iface in type.GetInterfaces())
+                        try
                         {
-
                             if (iface.FullName == typeof(IScreen).FullName)
                             {
-                                try
-                                {
-                                    var screen = Activator.CreateInstance(type) as IScreen;
-                                    Logging.Debug($"Registering Screen: {screen.Title} from type {type.Name}");
-                                    ComputerManager.Instance.RegisterScreen(screen);
-                                }
-                                catch (Exception e)
-                                {
-                                    Logging.Exception(e);
-                                }
+                                var screen = Activator.CreateInstance(type) as IScreen;
+                                Logging.Debug($"Registering Screen: {screen.Title} from type {type.Name}");
+                                ComputerManager.Instance.RegisterScreen(screen);
                             }
                         }
+                        catch (Exception e) { Logging.Exception(e); }
                     }
                 }
             }
-            catch (Exception e) { Logging.Exception(e); }
             ComputerManager.Instance.RegisterScreen(new VersionScreen());
             ComputerManager.Instance.Initialize();
         }
 
-        
+        public Assembly[] GetAssemblies()
+        {
+            try
+            {
+                return AppDomain.CurrentDomain.GetAssemblies();
+            }
+            catch (Exception e)
+            {
+                Logging.Fatal("Error getting assemblies");
+                Logging.Exception(e);
+                return null;
+            }
+        }
+
+        Type[] GetTypes(Assembly assembly)
+        {
+            try
+            {
+                return assembly.GetTypes();
+            }
+            catch
+            {
+                Logging.Fatal($"Error getting types from assembly {assembly.FullName}");
+                return new Type[] { };
+            }
+        }
+
+        Type[] GetInterfaces(Type type)
+        {
+            try
+            {
+                return type.GetInterfaces();
+            }
+            catch
+            {
+                Logging.Fatal($"Error getting interfaces from type {type.FullName}");
+                return new Type[] { };
+            }
+        }
     }
 }
